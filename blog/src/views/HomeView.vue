@@ -13,20 +13,29 @@
       {{ name }}
     </div>
     <button @click="stopWatch">Stop Watching</button> -->
-    <PostList v-if="showPosts" :posts="posts" />
-    <button @click="showPosts = !showPosts">Toggle Posts</button>
-    <button @click="posts.pop()">Delete a Post</button>
+    <!--  <button @click="showPosts = !showPosts">Toggle Posts</button>
+    <button @click="posts.pop()">Delete a Post</button> -->
+    <div v-if="error">
+      {{ error }}
+    </div>
+    <div v-if="posts.length">
+      <PostList :posts="posts" />
+    </div>
+    <div v-else>
+      <Spinner />
+    </div>
   </div>
 </template>
 
 <script>
-import { ref } from "@vue/reactivity";
 import { computed, watch, watchEffect } from "@vue/runtime-core";
 import PostList from "../components/PostList.vue";
+import getPosts from "../composables/getPosts";
+import Spinner from "../components/Spinner.vue";
 
 export default {
   name: "HomeView",
-  components: { PostList },
+  components: { PostList, Spinner },
   setup() {
     //  'This' Does not work in the setup function
     /* this.$refs.name */
@@ -68,22 +77,21 @@ export default {
 
     return { names, search, matchingNames, stopWatch, stopWatching }; */
 
-    const posts = ref([
-      {
-        title: "Welcome to the blog",
-        body: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci cumque saepe perferendis accusantium numquam, at ullam sed recusandae dicta aut vitae quibusdam cum ratione tenetur amet autem ea iure atque rerum! Culpa fugiat minima provident at, dolorem voluptatem praesentium vel sapiente vero exercitationem molestias porro, quae itaque labore ullam modi laudantium odio quod sunt! Deserunt molestiae libero tempora dolores soluta doloribus veniam odio. Voluptates libero quaerat expedita accusantium corrupti inventore, asperiores iure adipisci fugit maxime dolore modi molestiae nam dolorem? Rerum quia quidem saepe, itaque iusto mollitia nemo iste fuga quisquam, laborum dignissimos sed, repellendus dolor ea non! Nam, dolores!",
-        id: 1,
-      },
-      {
-        title: "Top 5 CSS tips",
-        body: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci cumque saepe perferendis accusantium numquam, at ullam sed recusandae dicta aut vitae quibusdam cum ratione tenetur amet autem ea iure atque rerum! Culpa fugiat minima provident at, dolorem voluptatem praesentium vel sapiente vero exercitationem molestias porro, quae itaque labore ullam modi laudantium odio quod sunt! Deserunt molestiae libero tempora dolores soluta doloribus veniam odio. Voluptates libero quaerat expedita accusantium corrupti inventore, asperiores iure adipisci fugit maxime dolore modi molestiae nam dolorem? Rerum quia quidem saepe, itaque iusto mollitia nemo iste fuga quisquam, laborum dignissimos sed, repellendus dolor ea non! Nam, dolores!",
-        id: 2,
-      },
-    ]);
+    /* const showPosts = ref(true); */
 
-    const showPosts = ref(true);
+    const { posts, error, load } = getPosts();
 
-    return { posts, showPosts };
+    load();
+
+    return { posts, error };
   },
 };
 </script>
+
+<style>
+.home {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 10px;
+}
+</style>
