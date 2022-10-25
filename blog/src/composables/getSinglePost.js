@@ -1,5 +1,5 @@
-import axios from "axios";
 import { ref } from "@vue/reactivity";
+import { projectFirestore } from "@/firebase/config";
 
 const getSinglePost = (id) => {
   const post = ref(null);
@@ -7,12 +7,13 @@ const getSinglePost = (id) => {
 
   const load = async () => {
     try {
-      let res = await axios.get("http://localhost:3000/posts/" + id);
-      if (res.status !== 200) {
-        throw Error("No data available");
+      const res = await projectFirestore.collection("posts").doc(id).get();
+
+      if (!res.exists) {
+        throw Error("That post does not exist");
       }
 
-      post.value = res.data;
+      post.value = { ...res.data(), id: res.id };
     } catch (err) {
       error.value = err.message;
       console.log(error.value);
