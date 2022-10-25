@@ -16,7 +16,7 @@
 <script>
 import { ref } from "@vue/reactivity";
 import axios from "axios";
-import router from "@/router";
+import { useRouter } from "vue-router";
 
 export default {
   setup() {
@@ -24,6 +24,8 @@ export default {
     const body = ref("");
     const tag = ref("");
     const tags = ref([]);
+
+    const router = useRouter();
 
     const handleKeydown = () => {
       if (!tags.value.includes(tag.value)) {
@@ -40,7 +42,7 @@ export default {
           body: body.value,
           tags: tags.value,
         });
-        router.push("/");
+        router.push({ name: "home" });
       } catch (error) {
         console.log(error);
       }
