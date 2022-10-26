@@ -15,8 +15,8 @@
 
 <script>
 import { ref } from "@vue/reactivity";
-import axios from "axios";
 import { useRouter } from "vue-router";
+import { projectFirestore, timestamp } from "@/firebase/config";
 
 export default {
   setup() {
@@ -37,11 +37,15 @@ export default {
 
     const handleSubmit = async () => {
       try {
-        await axios.post("http://localhost:3000/posts", {
+        const post = {
           title: title.value,
           body: body.value,
           tags: tags.value,
-        });
+          createdAt: timestamp(),
+        };
+
+        await projectFirestore.collection("posts").add(post);
+
         router.push({ name: "home" });
       } catch (error) {
         console.log(error);
